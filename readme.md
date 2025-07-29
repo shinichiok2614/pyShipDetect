@@ -1,91 +1,203 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
+# 🚀 Hướng Dẫn Cài Docker, OpenCV-Python và YOLOv5
 
-# Hướng dẫn cài đặt YOLOv5 và các thư viện liên quan
+## 🐳 1. Cài Đặt Docker Phiên Bản Cũ
 
-## 1. Cài đặt thư viện qua Terminal
+### macOS
+Tải Docker Desktop phiên bản 4.25.2 cho Mac (amd64):
+[🔗 Tải tại đây](https://desktop.docker.com/mac/main/amd64/129061/Docker.dmg)
 
+### Windows
+Cài đặt Docker Desktop 4.25.0 qua Chocolatey:
 ```bash
+choco install docker-desktop --version=4.25.0
+```
+
+Hoặc tham khảo link:  
+[https://community.chocolatey.org/packages/docker-desktop/4.25.0](https://community.chocolatey.org/packages/docker-desktop/4.25.0)
+
+---
+
+## 🐍 2. Tạo Docker Image có sẵn OpenCV-Python
+
+Bạn có thể dùng các Docker image như:
+
+- `jupyter/scipy-notebook`
+- `python:3.10` rồi cài thêm `opencv-python`
+
+### 📌 Ví dụ Dockerfile
+
+\`\`\`Dockerfile
+FROM python:3.10-slim
+
+# Cài các công cụ cần thiết
+RUN apt-get update && apt-get install -y \
+    build-essential cmake git wget unzip libgtk2.0-dev libgl1-mesa-glx \
+    && rm -rf /var/lib/apt/lists/*
+
+# Cài Python packages
+RUN pip install --no-cache-dir opencv-python numpy matplotlib
+
+# (Tuỳ chọn) copy code vào container
+WORKDIR /app
+COPY . /app
+\`\`\`
+
+### 🛠️ Build image
+
+\`\`\`bash
+docker build -t my-opencv-image .
+\`\`\`
+
+### ▶️ Chạy container
+
+\`\`\`bash
+docker run -it --rm -v $(pwd):/app my-opencv-image bash
+\`\`\`
+
+---
+
+## ✅ 3. Kiểm Tra OpenCV Trong Container
+
+\`\`\`bash
+python
+\`\`\`
+
+Trong Python shell:
+
+\`\`\`python
+import cv2
+print(cv2.__version__)
+\`\`\`
+
+Kết quả ví dụ:
+
+\`\`\`
+4.8.1
+\`\`\`
+
+### 🖼️ Tạo ảnh kiểm tra
+
+\`\`\`python
+import numpy as np
+img = np.zeros((100, 100, 3), dtype=np.uint8)
+cv2.imwrite("test.png", img)
+\`\`\`
+
+Sau đó gõ:
+
+\`\`\`bash
+ls
+\`\`\`
+
+Kết quả: bạn sẽ thấy file `test.png` được tạo → chứng minh `cv2` hoạt động.
+
+---
+
+## ⚙️ 4. Dùng Docker Interpreter Trong PyCharm
+
+1. Mở **Settings → Project: ... → Python Interpreter**
+2. Bấm biểu tượng `⚙` → `Add...`
+3. Chọn `Docker` → `New...`
+4. Nếu dùng Docker Desktop: chọn Unix socket
+5. Chọn đúng image (ví dụ: `my-opencv-image`)
+6. Nhấn `OK`
+
+---
+
+## ➕ 5. Cài Thêm Thư Viện Trong Container
+
+Ví dụ container có tên là `opencv-container`:
+
+\`\`\`bash
+docker exec -it opencv-container pip install scikit-learn pandas
+\`\`\`
+
+Hoặc thêm vào `Dockerfile` để giữ nguyên trạng thái.
+
+---
+
+## 📦 6. Các Cách Cài OpenCV-Python
+
+### Cách 1: Qua pip
+
+\`\`\`bash
+pip install opencv-python
+\`\`\`
+
+### Cách 2: Cài thủ công từ GitHub
+
+\`\`\`bash
+git clone https://github.com/opencv/opencv-python.git
+cd opencv-python
+
+python -m venv venv
+source venv/bin/activate  # Windows dùng .\venv\Scripts\activate
+
+pip install -r requirements.txt
+python setup.py bdist_wheel
+pip install dist/*.whl
+\`\`\`
+
+---
+
+# 🎯 Cài Đặt YOLOv5
+
+## 1. Qua Terminal
+
+\`\`\`bash
 pip install torch torchvision torchaudio
 pip install opencv-python matplotlib
+
 git clone https://github.com/ultralytics/yolov5
 cd yolov5
 pip install -r requirements.txt
-```
+\`\`\`
 
+---
 
-## 2. Cài đặt thư viện qua giao diện PyCharm (GUI)
+## 2. Qua Giao Diện PyCharm
 
-**Bước 1:** Mở Settings (Windows) hoặc Preferences (macOS)
+- **Bước 1:** Mở `Settings` hoặc `Preferences`
+- **Bước 2:** Vào `Project → Python Interpreter`
+- **Bước 3:** Bấm `+` → tìm và cài các thư viện như `torch`, `opencv-python`
 
-- Windows/Linux: `File → Settings`
-- macOS: `PyCharm → Preferences`
+---
 
-**Bước 2:** Chọn Python Interpreter
+## 3. Clone và Cài Đặt YOLOv5 Repo
 
-- Vào `Project: [Tên dự án của bạn] → Python Interpreter`
-- Nhấn vào nút `+` ở góc trên bên phải
-
-**Bước 3:** Tìm và cài đặt thư viện
-
-- Nhập tên thư viện cần cài (ví dụ: `opencv-python`, `torch`, `matplotlib`)
-- Nhấn `Install Package`
-
-
-## 3. Clone và cài đặt repo YOLOv5
-
-```bash
-# Clone YOLOv5 repo
+\`\`\`bash
 git clone https://github.com/ultralytics/yolov5
 cd yolov5
-
-# Cài các thư viện cần thiết từ requirements.txt
 pip install -r requirements.txt
-```
+\`\`\`
 
-**Lưu ý:**
-Nên chạy PyCharm bằng quyền Administrator để tránh lỗi phân quyền khi cài các thư viện.
+**Lưu ý:** Nên chạy PyCharm bằng quyền **Administrator** trên Windows.
 
-## 4. Cài YOLOv5 thủ công vào môi trường ảo (venv) của PyCharm Project
+---
 
-**Bước 1:** Tải và giải nén YOLOv5
+## 4. Cài YOLOv5 Vào Virtual Environment (venv)
 
-- Vào [YOLOv5 GitHub](https://github.com/ultralytics/yolov5)
-- Nhấn nút `Code` → `Download ZIP`
-- Giải nén, ví dụ: `C:\Users\PC\Downloads\yolov5-main`
+- Tải ZIP từ [https://github.com/ultralytics/yolov5](https://github.com/ultralytics/yolov5)
+- Giải nén vào thư mục, ví dụ: `C:\Users\PC\Downloads\yolov5-main`
 
-**Bước 2:** Mở lại PyCharm, đảm bảo dùng đúng môi trường ảo
+Sau đó trong PyCharm terminal:
 
-- Vào `File → Settings → Project: [Tên project] → Python Interpreter`
-- Đảm bảo Python interpreter là `.venv\Scripts\python.exe` của dự án
-
-**Bước 3:** Cài các thư viện cần thiết vào đúng venv
-
-- Dùng Terminal trong PyCharm:
-
-```bash
-cd đường_dẫn_đến_yolov5_main
-pip install -r requirements.txt
-```
-
-**Ví dụ:**
-
-```bash
+\`\`\`bash
 cd "C:\Users\PC\Downloads\yolov5-main"
 pip install -r requirements.txt
-```
+\`\`\`
 
-*Câu lệnh trên sẽ cài các thư viện (`torch`, `opencv`, `matplotlib`...) vào đúng venv nếu bạn chạy trong Terminal của PyCharm.*
+---
 
-## 5. Tải model EAST (Text Detection Model)
+## 5. Tải Model EAST (Text Detection)
 
-- **Tải file `frozen_east_text_detection.pb` tại:**
-[Download script trên GitHub OpenCV](https://github.com/opencv/opencv_extra/blob/master/testdata/dnn/download_models.py)
-- **Hoặc tải trực tiếp qua Google Drive**
-*(Bạn có thể cung cấp thêm link Google Drive tại đây nếu có)*
+- [Tải \`frozen_east_text_detection.pb\`](https://github.com/opencv/opencv_extra/blob/master/testdata/dnn/download_models.py)
+- Hoặc thêm link Google Drive tùy ý
 
-> Hãy copy toàn bộ nội dung và dán lên README.md GitHub của bạn để hướng dẫn người dùng setup nhanh chóng, trực quan.
+---
 
-<div style="text-align: center">⁂</div>
+> Bạn có thể copy toàn bộ nội dung này để dán lên GitHub dưới dạng `README.md` giúp người khác dễ dàng thiết lập và sử dụng nhanh chóng.
 
-[^1]: https://github.com/ultralytics/yolov5
+---
 
+<div align="center">⁂</div>
