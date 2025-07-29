@@ -2,12 +2,13 @@
 
 ## 🐳 1. Cài Đặt Docker Phiên Bản Cũ
 
-### macOS
-Tải Docker Desktop phiên bản 4.25.2 cho Mac (amd64):
+### macOS  
+Tải Docker Desktop phiên bản 4.25.2 cho Mac (amd64):  
 [🔗 Tải tại đây](https://desktop.docker.com/mac/main/amd64/129061/Docker.dmg)
 
-### Windows
+### Windows  
 Cài đặt Docker Desktop 4.25.0 qua Chocolatey:
+
 ```bash
 choco install docker-desktop --version=4.25.0
 ```
@@ -26,7 +27,7 @@ Bạn có thể dùng các Docker image như:
 
 ### 📌 Ví dụ Dockerfile
 
-\`\`\`Dockerfile
+```Dockerfile
 FROM python:3.10-slim
 
 # Cài các công cụ cần thiết
@@ -40,54 +41,54 @@ RUN pip install --no-cache-dir opencv-python numpy matplotlib
 # (Tuỳ chọn) copy code vào container
 WORKDIR /app
 COPY . /app
-\`\`\`
+```
 
 ### 🛠️ Build image
 
-\`\`\`bash
+```bash
 docker build -t my-opencv-image .
-\`\`\`
+```
 
 ### ▶️ Chạy container
 
-\`\`\`bash
+```bash
 docker run -it --rm -v $(pwd):/app my-opencv-image bash
-\`\`\`
+```
 
 ---
 
 ## ✅ 3. Kiểm Tra OpenCV Trong Container
 
-\`\`\`bash
+```bash
 python
-\`\`\`
+```
 
 Trong Python shell:
 
-\`\`\`python
+```python
 import cv2
 print(cv2.__version__)
-\`\`\`
+```
 
 Kết quả ví dụ:
 
-\`\`\`
+```
 4.8.1
-\`\`\`
+```
 
 ### 🖼️ Tạo ảnh kiểm tra
 
-\`\`\`python
+```python
 import numpy as np
 img = np.zeros((100, 100, 3), dtype=np.uint8)
 cv2.imwrite("test.png", img)
-\`\`\`
+```
 
 Sau đó gõ:
 
-\`\`\`bash
+```bash
 ls
-\`\`\`
+```
 
 Kết quả: bạn sẽ thấy file `test.png` được tạo → chứng minh `cv2` hoạt động.
 
@@ -108,9 +109,9 @@ Kết quả: bạn sẽ thấy file `test.png` được tạo → chứng minh `
 
 Ví dụ container có tên là `opencv-container`:
 
-\`\`\`bash
+```bash
 docker exec -it opencv-container pip install scikit-learn pandas
-\`\`\`
+```
 
 Hoặc thêm vào `Dockerfile` để giữ nguyên trạng thái.
 
@@ -120,13 +121,13 @@ Hoặc thêm vào `Dockerfile` để giữ nguyên trạng thái.
 
 ### Cách 1: Qua pip
 
-\`\`\`bash
+```bash
 pip install opencv-python
-\`\`\`
+```
 
 ### Cách 2: Cài thủ công từ GitHub
 
-\`\`\`bash
+```bash
 git clone https://github.com/opencv/opencv-python.git
 cd opencv-python
 
@@ -136,7 +137,7 @@ source venv/bin/activate  # Windows dùng .\venv\Scripts\activate
 pip install -r requirements.txt
 python setup.py bdist_wheel
 pip install dist/*.whl
-\`\`\`
+```
 
 ---
 
@@ -144,14 +145,14 @@ pip install dist/*.whl
 
 ## 1. Qua Terminal
 
-\`\`\`bash
+```bash
 pip install torch torchvision torchaudio
 pip install opencv-python matplotlib
 
 git clone https://github.com/ultralytics/yolov5
 cd yolov5
 pip install -r requirements.txt
-\`\`\`
+```
 
 ---
 
@@ -165,11 +166,11 @@ pip install -r requirements.txt
 
 ## 3. Clone và Cài Đặt YOLOv5 Repo
 
-\`\`\`bash
+```bash
 git clone https://github.com/ultralytics/yolov5
 cd yolov5
 pip install -r requirements.txt
-\`\`\`
+```
 
 **Lưu ý:** Nên chạy PyCharm bằng quyền **Administrator** trên Windows.
 
@@ -182,22 +183,16 @@ pip install -r requirements.txt
 
 Sau đó trong PyCharm terminal:
 
-\`\`\`bash
+```bash
 cd "C:\Users\PC\Downloads\yolov5-main"
 pip install -r requirements.txt
-\`\`\`
+```
 
 ---
 
 ## 5. Tải Model EAST (Text Detection)
 
-- [Tải \`frozen_east_text_detection.pb\`](https://github.com/opencv/opencv_extra/blob/master/testdata/dnn/download_models.py)
+- [Tải `frozen_east_text_detection.pb`](https://github.com/opencv/opencv_extra/blob/master/testdata/dnn/download_models.py)
 - Hoặc thêm link Google Drive tùy ý
 
 ---
-
-> Bạn có thể copy toàn bộ nội dung này để dán lên GitHub dưới dạng `README.md` giúp người khác dễ dàng thiết lập và sử dụng nhanh chóng.
-
----
-
-<div align="center">⁂</div>
